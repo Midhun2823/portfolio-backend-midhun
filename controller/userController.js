@@ -104,6 +104,8 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     .cookie("token", "", {
       expires: new Date(Date.now()),
       httpOnly: true,
+      sameSite: "None",
+      secure:true
     })
     .json({
       success: true,
@@ -134,7 +136,7 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   };
 
   if (req.files && req.files.avatar) {
-    const avatar = req.fiiles.avatar;
+    const avatar = req.files.avatar;
     const user = await User.findById(req.user.id);
     const profileImageId = user.avatar.public_id;
     await cloudinary.uploader.destroy(profileImageId);
@@ -149,7 +151,7 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   }
 
   if (req.files && req.files.resume) {
-    const resume = req.fiiles.resume;
+    const resume = req.files.resume;
     const user = await User.findById(req.user.id);
     const resumeId = user.resume.public_id;
     await cloudinary.uploader.destroy(resumeId);
@@ -204,7 +206,8 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getUserForPortfolio = catchAsyncErrors(async (req, res, next) => {
-  const id = "6705f3cc85082481421b60c0";
+  // const id = "6705f3cc85082481421b60c0"; // mongoDB Compass localhost
+  const id = "6713d9007347e352023df50b"; // mongoDB Atlas
   const user = await User.findById(id);
   res.status(200).json({
     success: true,
@@ -266,5 +269,5 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
   user.resetPasswordExpire = undefined;
   user.resetPasswordToken = undefined;
   await user.save();
-  generateToken(user, "Reset Password Successfully!", 200, res)
+  generateToken(user, "Reset Password Successfully!", 200, res);
 });
